@@ -1,0 +1,112 @@
+NAME="lua-luasec"
+VERSION=1.0.1
+RELEASE=1
+CATEGORY="Lua"
+SUMMARY="A binding for OpenSSL library to provide TLS/SSL communication over LuaSocket"
+DESCRIPTION="\
+This version delegates to LuaSocket the TCP connection
+establishment between the client and server. Then LuaSec
+uses this connection to start a secure TLS/SSL session.
+"
+HOMEPAGE="https://github.com/brunoos/luasec/wiki"
+
+GIT_REPO="https://github.com/brunoos/luasec"
+declare -A GIT_DATEHASH_BY_NAME=(
+  # git log --date=iso-strict --format='%cd/%H' -1
+  [1.0.1]=2021-04-26T09:16:05-03:00/v1.0.1
+  [1.0]=2021-01-30T10:32:28-03:00/v1.0
+)
+REV_HASH="${GIT_DATEHASH_BY_NAME[${VERSION}]#*/}"
+REV_DATE="${GIT_DATEHASH_BY_NAME[${VERSION}]%/*}"
+REV_DATE_SHORT="${REV_DATE%%T*}"
+GIT_BASENAME="${GIT_REPO##*/}"
+SRC_URI="${GIT_REPO}/archive/${REV_HASH}/${GIT_BASENAME}-${VERSION}.tar.gz"
+SRC_DIR="${GIT_BASENAME}-${REV_HASH#v}"
+
+################################
+LUA_VERSIONS="5.3:5.4"
+LUA_PKG_NAME="${NAME#lua-}"
+source lua.experiment
+
+################################
+## Patch files
+################################
+# Patch filenames are in a default style of 'git format-patch'
+PATCH_URI=$(\
+  find -maxdepth 1 -type f -name '[0-9][0-9][0-9][0-9]-*.patch' \
+  | sort \
+)
+# Additional patches, if any
+PATCH_URI+="
+  1.0-Makefile.patch
+  1.0.1-luasocket-3.0-settimeout.patch
+"
+
+################################
+## Requirements for building
+################################
+BUILD_REQUIRES="\
+  lua53-devel\
+  lua53-socket\
+\
+  lua54-devel\
+  lua54-socket\
+\
+  libssl-devel\
+"
+# TEST_REQUIRES="\
+# "
+
+################################
+ABI=0
+
+
+################################
+_CYGPORT_RESTRICT_postinst_doc_=1
+
+set_packages_lua_versions ${LUA_VERSIONS} ${LUA_PKG_NAME}
+
+################################
+src_compile_lua() {
+  mkdir -p ${B}/${LUA_VERSION}
+  cd  ${B}/${LUA_VERSION}
+
+  lndirs ${S} .
+
+  cygmake \
+    LUAPATH="${LUA_SCRIPTDIR}"\
+    LUACPATH="${LUA_LIBDIR}"\
+    INC_PATH="${LUA_CFLAGS}"\
+    LUA_LIBS="${LUA_LIBS}"\
+    CC=${CC} \
+    LD=${LD} \
+    linux\
+  ;
+}
+
+################################
+src_install_lua() {
+  cd ${B}/${LUA_VERSION}
+
+  cygmake \
+    DESTDIR="${D}"\
+    LUAPATH="${LUA_SCRIPTDIR}"\
+    LUACPATH="${LUA_LIBDIR}"\
+    INC_PATH="${LUA_CFLAGS}"\
+    LUA_LIBS="${LUA_LIBS}"\
+    CC=${CC} \
+    LD=${LD} \
+    install\
+  ;
+
+  dodoc CHANGELOG INSTALL LICENSE *.md *.rockspec
+}
+
+################################
+src_test_lua() {
+  cd ${B}/${LUA_VERSION}
+
+  echo "No test suite."
+}
+
+################################

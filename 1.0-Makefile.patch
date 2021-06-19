@@ -1,0 +1,10 @@
+--- origsrc/luasec-1.0/src/Makefile	2021-01-30 22:32:28.000000000 +0900
++++ src/luasec-1.0/src/Makefile
+@@ -10,6 +10,7 @@
+  ec.o
+ 
+ LIBS=-lssl -lcrypto -lluasocket
++LIBS+=$(LUA_LIBS)
+ 
+ WARN=-Wall -pedantic
+ 
