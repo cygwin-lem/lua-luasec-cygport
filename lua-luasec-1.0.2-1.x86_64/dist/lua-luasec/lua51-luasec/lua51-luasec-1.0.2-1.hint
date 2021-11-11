@@ -1,5 +1,5 @@
 category: Lua
-requires: cygwin libssl1.1 lua51 lua54-luasec lua54-socket lua51
+requires: cygwin libssl1.1 lua51 lua51-socket
 sdesc: "A binding for OpenSSL library to provide TLS/SSL communication over LuaSocket"
 ldesc: "This version delegates to LuaSocket the TCP connection
 establishment between the client and server. Then LuaSec
