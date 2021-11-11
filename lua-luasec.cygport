@@ -1,5 +1,5 @@
 NAME="lua-luasec"
-VERSION=1.0.1
+VERSION=1.0.2
 RELEASE=1
 CATEGORY="Lua"
 SUMMARY="A binding for OpenSSL library to provide TLS/SSL communication over LuaSocket"
@@ -13,6 +13,7 @@ HOMEPAGE="https://github.com/brunoos/luasec/wiki"
 GIT_REPO="https://github.com/brunoos/luasec"
 declare -A GIT_DATEHASH_BY_NAME=(
   # git log --date=iso-strict --format='%cd/%H' -1
+  [1.0.2]=2021-08-14T10:28:09-03:00/v1.0.2
   [1.0.1]=2021-04-26T09:16:05-03:00/v1.0.1
   [1.0]=2021-01-30T10:32:28-03:00/v1.0
 )
